@@ -1,17 +1,3 @@
-# import pyautogui as pg
-# import time
-
-# # boton OK 1013,685
-# # while(1):
-# #     print(pg.position())
-# # time.sleep(5)
-
-# time.sleep(2)
-# pg.doubleClick(938,540)
-# pg.typewrite("hola")
-# print(pg.position())       
-# pg.click(1013,685)     
-# while(1):
 import itertools,time, serial
 import serial.tools.list_ports
 
@@ -33,10 +19,10 @@ if ser.isOpen():
 # Define los caracteres permitidos para la clave
 caracteres = '0123456789'
 # # Define la longitud mínima y máxima de la clave
-longitud_minima = 1
+longitud_minima = 7
 longitud_maxima = 8
 
-dato_correcto = "1111"
+inicio = 17411600
 tiempo_inicio = time.time()
 datos_recibidos = b""
 caracter_parada = b"<"
@@ -44,8 +30,11 @@ caracter_parada = b"<"
 clave_encontrada = False
 combinaciones = []
 for longitud in range(longitud_minima, longitud_maxima+1):
-    for combinacion in itertools.product(caracteres, repeat=longitud):
-        clave = ''.join(combinacion)
+    rango_inicio = inicio - 10 ** (longitud - 1)  # Calcula el rango de inicio según la longitud de la clave
+    rango_fin = inicio + 10 ** (longitud - 1)  # Calcula el rango de fin según la longitud de la clave
+    for num in range(rango_inicio, rango_fin):
+        
+        clave = str(num)
         datos = ">SPW"+clave+"<"
         ser.write(datos.encode())
         print(clave)
@@ -59,14 +48,14 @@ for longitud in range(longitud_minima, longitud_maxima+1):
                  
                 datos_recibidos = b""
                 break
-        # print(clave_encontrada)
+        
         if clave_encontrada == True:
             print("Esta es la clave del equipo",clave)
             break
-        # print(ser.read(10))
-        # print(type(clave))
+        
     if clave_encontrada == True:
         break
+
 tiempo_fin = time.time()
 duracion = tiempo_fin - tiempo_inicio
 
